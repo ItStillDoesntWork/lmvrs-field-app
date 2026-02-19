@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LMVRS Field Reference</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg">
+<link rel="apple-touch-icon" href="assets/icons/icon.svg">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ══════════════ ETA BAR (persistent) ══════════════ -->
+<div class="eta-bar" id="eta-bar">
+  <div class="eta-bar-item">
+    <span class="eta-bar-label">UVA</span>
+    <span class="eta-bar-value" id="eta-uva">...</span>
+  </div>
+  <div class="eta-bar-item">
+    <span class="eta-bar-label">MJH</span>
+    <span class="eta-bar-value" id="eta-mjh">...</span>
+  </div>
+  <div class="eta-bar-item">
+    <span class="eta-bar-label">&#x1F681;</span>
+    <span class="eta-bar-value" id="eta-heli">...</span>
+  </div>
+</div>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div id="home" class="screen active">
+  <div class="home-header">
+    <div class="logo-row">
+      <div class="logo-badge">&#x25B2; TJEMS &middot; 2020</div>
+      <div class="logo-badge lmvrs-badge">&#x2605; LMVRS &middot; 2025</div>
+    </div>
+    <div class="home-title">FIELD<br><span>REFERENCE</span></div>
+    <div class="home-sub">Lake Monticello VRS &nbsp;&middot;&nbsp; <em>LMVRS Expanded Scope</em> integrated</div>
+  </div>
+
+  <div class="home-primary-actions">
+    <button class="cpr-btn">&#x2764;&#xFE0F; CPR</button>
+    <button class="tools-btn" onclick="App.showScreen('tools-help')">&#x1F6E0;&#xFE0F; Tools / Help</button>
+  </div>
+
+  <div class="home-nav">
+    <div class="nav-label">By Provider Level &mdash; Drugs &amp; Doses</div>
+    <button class="provider-btn emt" onclick="App.showMeds('EMT')">
+      <div class="prov-icon">EMT</div>
+      <div class="prov-info"><div class="prov-name">EMT</div><div class="prov-desc">Includes LMVRS expanded EMT scope</div></div>
+      <div class="prov-arrow">&rsaquo;</div>
+    </button>
+    <button class="provider-btn aemt" onclick="App.showMeds('AEMT')">
+      <div class="prov-icon">AEMT</div>
+      <div class="prov-info"><div class="prov-name">AEMT</div><div class="prov-desc">LMVRS expanded AEMT scope</div></div>
+      <div class="prov-arrow">&rsaquo;</div>
+    </button>
+    <button class="provider-btn intermediate" onclick="App.showMeds('IP')">
+      <div class="prov-icon">I/P</div>
+      <div class="prov-info"><div class="prov-name">Intermediate / Paramedic</div><div class="prov-desc">I/P level &middot; All TJEMS protocols</div></div>
+      <div class="prov-arrow">&rsaquo;</div>
+    </button>
+    <button class="provider-btn medic" onclick="App.showMeds('ALL')">
+      <div class="prov-icon">ALL</div>
+      <div class="prov-info"><div class="prov-name">Full Drug Reference</div><div class="prov-desc">All meds &middot; All levels &middot; Searchable</div></div>
+      <div class="prov-arrow">&rsaquo;</div>
+    </button>
+  </div>
+
+  <div class="home-actions">
+    <div class="action-btn" onclick="App.showScreen('conditions')">
+      <div class="action-icon">&#x1FAC0;</div>
+      <div><div class="action-name">Protocols</div><div class="action-sub">By condition</div></div>
+    </div>
+  </div>
+
+  <div class="home-footer">
+    <div>LMVRS Field Reference v1.0</div>
+    <div>Not a substitute for medical direction</div>
+    <div>TJEMS 2020 protocols &middot; LMVRS expanded scope 2025</div>
+    <div style="margin-top:4px">Clinical content not OMD-reviewed in this format</div>
+    <div>Built for Lake Monticello Volunteer Rescue Squad</div>
+  </div>
+</div>
+
+<!-- ══════════════ MEDS ══════════════ -->
+<div id="meds" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('home')">&lsaquo;</div>
+    <div class="screen-title" id="meds-title">Drug Reference</div>
+    <div class="screen-badge" id="meds-badge"></div>
+    <div class="sort-toggle">
+      <button class="sort-btn active" id="sort-generic" onclick="App.setSortMode('generic')">GENERIC</button>
+      <button class="sort-btn" id="sort-brand" onclick="App.setSortMode('brand')">BRAND</button>
+    </div>
+  </div>
+  <div class="search-bar">
+    <input type="search" class="search-input" placeholder="Search medications..." id="med-search" oninput="App.filterMeds(this.value)">
+  </div>
+  <div class="cat-tabs" id="cat-tabs">
+    <div class="cat-tab active" onclick="App.filterByCategory(this,'all')">All</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'cardiac')">Cardiac</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'analgesic')">Pain</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'airway')">Airway/RSI</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'neuro')">Neuro</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'anaphylaxis')">Allergy</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'sedation')">Sedation</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'vasoactive')">Vasoactive</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'gi')">GI/Nausea</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'reversal')">Reversal</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'antibiotic')">Antibiotic</div>
+    <div class="cat-tab" onclick="App.filterByCategory(this,'procedure')">Procedure</div>
+  </div>
+  <div class="content" id="meds-content"></div>
+</div>
+
+<!-- ══════════════ CONDITIONS ══════════════ -->
+<div id="conditions" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('home')">&lsaquo;</div>
+    <div class="screen-title">Protocols</div>
+  </div>
+  <div class="search-bar">
+    <input type="search" class="search-input" placeholder="Search conditions..." id="cond-search" oninput="App.filterConditions(this.value)">
+  </div>
+  <div class="content" id="cond-content"></div>
+</div>
+
+<!-- ══════════════ CALCULATOR ══════════════ -->
+<div id="calculator" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.goBack()">&lsaquo;</div>
+    <div class="screen-title">Dose Calculator</div>
+  </div>
+  <div class="calc-section">
+    <div class="weight-input-group">
+      <div class="weight-label">Patient Weight</div>
+      <div class="weight-row">
+        <input type="number" class="weight-field" id="pt-weight" placeholder="70" oninput="App.calcDoses()" min="1" max="300">
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="btn-kg" onclick="App.setUnit('kg')">kg</button>
+          <button class="unit-btn" id="btn-lbs" onclick="App.setUnit('lbs')">lbs</button>
+        </div>
+      </div>
+      <div class="lbs-info" id="lbs-info"></div>
+    </div>
+    <div class="calc-results" id="calc-results">
+      <div class="no-results">Enter patient weight to calculate doses</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CPR MODE ══════════════ -->
+<div id="cpr-mode" class="screen"></div>
+
+<!-- ══════════════ TOOLS / HELP ══════════════ -->
+<div id="tools-help" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('home')">&lsaquo;</div>
+    <div class="screen-title">Tools / Help</div>
+  </div>
+  <div class="tool-grid" id="tool-grid"></div>
+  <div class="help-section" id="help-section">
+    <div class="help-section-title">Help &amp; Onboarding</div>
+    <div id="help-content"></div>
+  </div>
+</div>
+
+<!-- ══════════════ PHONE NUMBERS ══════════════ -->
+<div id="phone-numbers" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">Phone Numbers</div>
+  </div>
+  <div class="phone-list" id="phone-list"></div>
+</div>
+
+<!-- ══════════════ TOOL SCREENS ══════════════ -->
+<div id="tool-gcs" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">Glasgow Coma Scale</div>
+  </div>
+  <div class="tool-content" id="gcs-content"></div>
+</div>
+
+<div id="tool-apgar" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">APGAR Score</div>
+  </div>
+  <div class="tool-content" id="apgar-content"></div>
+</div>
+
+<div id="tool-rule9s" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">Rule of 9s</div>
+  </div>
+  <div class="tool-content" id="rule9s-content"></div>
+</div>
+
+<div id="tool-12lead" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">12-Lead Placement</div>
+  </div>
+  <div class="tool-content" id="lead12-content"></div>
+</div>
+
+<div id="tool-broselow" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">Broselow Reference</div>
+  </div>
+  <div class="tool-content" id="broselow-content"></div>
+</div>
+
+<div id="tool-sample" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">SAMPLE History</div>
+  </div>
+  <div class="tool-content" id="sample-content"></div>
+</div>
+
+<div id="tool-opqrst" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">OPQRST Pain Assessment</div>
+  </div>
+  <div class="tool-content" id="opqrst-content"></div>
+</div>
+
+<div id="tool-eta" class="screen">
+  <div class="screen-header">
+    <div class="back-btn" onclick="App.showScreen('tools-help')">&lsaquo;</div>
+    <div class="screen-title">Hospital ETA</div>
+  </div>
+  <div class="tool-content" id="eta-detail-content"></div>
+</div>
+
+<!-- Inline calc overlay -->
+<div class="inline-calc-overlay" id="inline-calc-overlay" onclick="App.closeInlineCalc(event)">
+  <div class="inline-calc-panel">
+    <div class="inline-calc-title">
+      <span id="inline-calc-drug-name">Dose Calc</span>
+      <button class="close-btn" onclick="App.closeInlineFull()">&#x2715;</button>
+    </div>
+    <div class="weight-input-group">
+      <div class="weight-label">Patient Weight</div>
+      <div class="weight-row">
+        <input type="number" class="weight-field" id="inline-weight" placeholder="70" oninput="App.calcInline()" min="1" max="300">
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="ibtn-kg" onclick="App.setInlineUnit('kg')">kg</button>
+          <button class="unit-btn" id="ibtn-lbs" onclick="App.setInlineUnit('lbs')">lbs</button>
+        </div>
+      </div>
+    </div>
+    <div id="inline-results"></div>
+  </div>
+</div>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script src="data/drugs.js"></script>
+<script src="data/protocols.js"></script>
+<script src="data/phone-numbers.js"></script>
+<script src="data/hospitals.js"></script>
+<script src="data/tools-config.js"></script>
+<script src="data/help-content.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/eta.js"></script>
+<script src="js/cpr.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

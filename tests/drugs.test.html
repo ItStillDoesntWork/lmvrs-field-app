@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMVRS Field Reference — Tests</title>
+<style>
+  body { font-family: monospace; background: #111; color: #eee; padding: 20px; }
+  h1 { color: #1e90ff; margin-bottom: 20px; }
+  .pass { color: #00d084; }
+  .fail { color: #ff3b30; font-weight: bold; }
+  .section { margin: 20px 0 8px; font-size: 16px; color: #ffd60a; }
+  .test { padding: 3px 0; font-size: 14px; }
+  .summary { margin-top: 24px; padding: 16px; border: 2px solid; border-radius: 8px; font-size: 18px; }
+  .summary.all-pass { border-color: #00d084; color: #00d084; }
+  .summary.has-fail { border-color: #ff3b30; color: #ff3b30; }
+</style>
+</head>
+<body>
+<h1>LMVRS Field Reference — Test Suite</h1>
+<div id="output"></div>
+
+<script src="../data/drugs.js"></script>
+<script src="../data/protocols.js"></script>
+<script src="../data/hospitals.js"></script>
+<script src="../js/utils.js"></script>
+<script>
+// Simple test runner
+let passed = 0;
+let failed = 0;
+const output = document.getElementById('output');
+
+function section(name) {
+  output.innerHTML += '<div class="section">' + name + '</div>';
+}
+
+function assert(description, actual, expected) {
+  if (Math.abs(actual - expected) < 0.01) {
+    passed++;
+    output.innerHTML += '<div class="test pass">  PASS: ' + description + ' (got ' + actual + ')</div>';
+  } else {
+    failed++;
+    output.innerHTML += '<div class="test fail">  FAIL: ' + description + ' — expected ' + expected + ', got ' + actual + '</div>';
+  }
+}
+
+function assertTrue(description, value) {
+  if (value) {
+    passed++;
+    output.innerHTML += '<div class="test pass">  PASS: ' + description + '</div>';
+  } else {
+    failed++;
+    output.innerHTML += '<div class="test fail">  FAIL: ' + description + '</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// DOSE CALCULATION TESTS
+// ═══════════════════════════════════════════════
+section('Dose Calculations — Weight-Based');
+
+// Fentanyl IV/IO/IM: 1 mcg/kg, max 50 mcg
+assert('Fentanyl 70kg IV', Utils.calculateDose(70, { factor: 1, unit: 'mcg', maxSingle: 50 }), 50);
+assert('Fentanyl 30kg IV', Utils.calculateDose(30, { factor: 1, unit: 'mcg', maxSingle: 50 }), 30);
+assert('Fentanyl 100kg IV (capped)', Utils.calculateDose(100, { factor: 1, unit: 'mcg', maxSingle: 50 }), 50);
+
+// Fentanyl IN: 2 mcg/kg, max 100 mcg
+assert('Fentanyl 70kg IN', Utils.calculateDose(70, { factor: 2, unit: 'mcg', maxSingle: 100 }), 100);
+assert('Fentanyl 40kg IN', Utils.calculateDose(40, { factor: 2, unit: 'mcg', maxSingle: 100 }), 80);
+
+// Fentanyl elderly: 0.5 mcg/kg
+assert('Fentanyl 80kg elderly', Utils.calculateDose(80, { factor: 0.5, unit: 'mcg', maxSingle: 50 }), 40);
+
+// Ketamine sub-dissociative: 0.5 mg/kg, max 20 mg
+assert('Ketamine 70kg', Utils.calculateDose(70, { factor: 0.5, unit: 'mg', maxSingle: 20 }), 20);
+assert('Ketamine 30kg', Utils.calculateDose(30, { factor: 0.5, unit: 'mg', maxSingle: 20 }), 15);
+
+// Diphenhydramine: 1 mg/kg, max 50 mg
+assert('Benadryl 40kg', Utils.calculateDose(40, { factor: 1, unit: 'mg', maxSingle: 50 }), 40);
+assert('Benadryl 80kg (capped)', Utils.calculateDose(80, { factor: 1, unit: 'mg', maxSingle: 50 }), 50);
+
+// Epinephrine anaphylaxis weight-based: 0.01 mg/kg, max 0.3 mg
+assert('Epi 70kg anaph', Utils.calculateDose(70, { factor: 0.01, unit: 'mg', maxSingle: 0.3 }), 0.3);
+assert('Epi 20kg anaph', Utils.calculateDose(20, { factor: 0.01, unit: 'mg', maxSingle: 0.3 }), 0.2);
+
+// Methylprednisolone: 1 mg/kg, max 125 mg
+assert('SoluMedrol 70kg', Utils.calculateDose(70, { factor: 1, unit: 'mg', maxSingle: 125 }), 70);
+assert('SoluMedrol 150kg (capped)', Utils.calculateDose(150, { factor: 1, unit: 'mg', maxSingle: 125 }), 125);
+
+// Magnesium Sulfate: 50 mg/kg, max 2000 mg
+assert('MagSulfate 40kg', Utils.calculateDose(40, { factor: 50, unit: 'mg', maxSingle: 2000 }), 2000);
+assert('MagSulfate 30kg', Utils.calculateDose(30, { factor: 50, unit: 'mg', maxSingle: 2000 }), 1500);
+
+// Etomidate: 0.3 mg/kg, min 20, max 30
+assert('Etomidate 80kg', Utils.calculateDose(80, { factor: 0.3, unit: 'mg', minDose: 20, maxSingle: 30 }), 24);
+assert('Etomidate 110kg (capped)', Utils.calculateDose(110, { factor: 0.3, unit: 'mg', minDose: 20, maxSingle: 30 }), 30);
+assert('Etomidate 50kg (min floor)', Utils.calculateDose(50, { factor: 0.3, unit: 'mg', minDose: 20, maxSingle: 30 }), 20);
+
+// Succinylcholine: 1.5 mg/kg
+assert('Succ 80kg', Utils.calculateDose(80, { factor: 1.5, unit: 'mg' }), 120);
+
+// Vecuronium: 0.1 mg/kg
+assert('Vec 90kg', Utils.calculateDose(90, { factor: 0.1, unit: 'mg' }), 9);
+
+// Midazolam: 0.1 mg/kg, max 5 mg
+assert('Midaz 30kg peds', Utils.calculateDose(30, { factor: 0.1, unit: 'mg', maxSingle: 5 }), 3);
+assert('Midaz 80kg (capped)', Utils.calculateDose(80, { factor: 0.1, unit: 'mg', maxSingle: 5 }), 5);
+
+// Sodium Bicarb: 1 mEq/kg
+assert('NaHCO3 80kg', Utils.calculateDose(80, { factor: 1, unit: 'mEq' }), 80);
+
+// Calcium Chloride: 20 mg/kg
+assert('CaCl2 70kg', Utils.calculateDose(70, { factor: 20, unit: 'mg' }), 1400);
+
+// Lidocaine IO peds: 0.5 mg/kg, max 40 mg
+assert('Lido 20kg peds IO', Utils.calculateDose(20, { factor: 0.5, unit: 'mg', maxSingle: 40 }), 10);
+assert('Lido 100kg adult IO (capped)', Utils.calculateDose(100, { factor: 0.5, unit: 'mg', maxSingle: 40 }), 40);
+
+// Dextrose peds
+assert('D50 >8yr 15kg', Utils.calculateDose(15, { factor: 1, unit: 'mL' }), 15);
+assert('D25 2-8yr 20kg', Utils.calculateDose(20, { factor: 2, unit: 'mL' }), 40);
+assert('D12.5 infant 5kg', Utils.calculateDose(5, { factor: 4, unit: 'mL' }), 20);
+
+// Dopamine infusion: 5 mcg/kg/min, 20 mcg/kg/min
+assert('Dopamine low 80kg', Utils.calculateDose(80, { factor: 5, unit: 'mcg/min', isInfusion: true }), 400);
+assert('Dopamine high 80kg', Utils.calculateDose(80, { factor: 20, unit: 'mcg/min', isInfusion: true }), 1600);
+
+// NS anaphylaxis bolus: 20 mL/kg
+assert('NS bolus 70kg', Utils.calculateDose(70, { factor: 20, unit: 'mL' }), 1400);
+
+// Atropine OP: 0.05 mg/kg
+assert('Atropine OP 80kg', Utils.calculateDose(80, { factor: 0.05, unit: 'mg' }), 4);
+
+section('Edge Cases');
+assert('Zero weight', Utils.calculateDose(0, { factor: 1, unit: 'mg', maxSingle: 50 }), 0);
+assert('Very small weight 1kg', Utils.calculateDose(1, { factor: 1, unit: 'mcg', maxSingle: 50 }), 1);
+assert('Large weight 200kg capped', Utils.calculateDose(200, { factor: 1, unit: 'mg', maxSingle: 50 }), 50);
+
+// ═══════════════════════════════════════════════
+// UNIT CONVERSION TESTS
+// ═══════════════════════════════════════════════
+section('Unit Conversions');
+assert('150 lbs to kg', Math.round(Utils.lbsToKg(150) * 10) / 10, 68);
+assert('220 lbs to kg', Math.round(Utils.lbsToKg(220) * 10) / 10, 99.8);
+
+// ═══════════════════════════════════════════════
+// PROVIDER LEVEL FILTERING
+// ═══════════════════════════════════════════════
+section('Provider Level Filtering');
+
+const LEVEL_RANK = { EMT: 1, AEMT: 2, IP: 3 };
+function drugMatchesProvider(drug, level) {
+  if (level === 'ALL') return true;
+  const drugRank = LEVEL_RANK[drug.minLevel] || 3;
+  return drugRank <= (LEVEL_RANK[level] || 3);
+}
+
+const aspirin = DRUGS.find(d => d.id === 'aspirin');
+const fentanyl = DRUGS.find(d => d.id === 'fentanyl');
+const adenosine = DRUGS.find(d => d.id === 'adenosine');
+
+assertTrue('Aspirin shows for EMT', drugMatchesProvider(aspirin, 'EMT'));
+assertTrue('Aspirin shows for AEMT', drugMatchesProvider(aspirin, 'AEMT'));
+assertTrue('Fentanyl hidden from EMT', !drugMatchesProvider(fentanyl, 'EMT'));
+assertTrue('Fentanyl shows for AEMT', drugMatchesProvider(fentanyl, 'AEMT'));
+assertTrue('Adenosine hidden from EMT', !drugMatchesProvider(adenosine, 'EMT'));
+assertTrue('Adenosine hidden from AEMT', !drugMatchesProvider(adenosine, 'AEMT'));
+assertTrue('Adenosine shows for IP', drugMatchesProvider(adenosine, 'IP'));
+assertTrue('All drugs show for ALL', DRUGS.every(d => drugMatchesProvider(d, 'ALL')));
+
+// ═══════════════════════════════════════════════
+// DATA INTEGRITY
+// ═══════════════════════════════════════════════
+section('Data Integrity');
+
+assertTrue('DRUGS array is not empty', DRUGS.length > 0);
+assertTrue('CONDITIONS array is not empty', CONDITIONS.length > 0);
+assertTrue('All drugs have id', DRUGS.every(d => d.id));
+assertTrue('All drugs have generic name', DRUGS.every(d => d.generic));
+assertTrue('All drugs have category', DRUGS.every(d => d.category));
+assertTrue('All drugs have minLevel', DRUGS.every(d => d.minLevel));
+assertTrue('All drugs have doses array', DRUGS.every(d => Array.isArray(d.doses)));
+assertTrue('All drugs have weightBased array', DRUGS.every(d => Array.isArray(d.weightBased)));
+assertTrue('All conditions have id', CONDITIONS.every(c => c.id));
+assertTrue('All conditions have name', CONDITIONS.every(c => c.name));
+assertTrue('All conditions have steps array', CONDITIONS.every(c => Array.isArray(c.steps)));
+assertTrue('No duplicate drug ids', new Set(DRUGS.map(d => d.id)).size === DRUGS.length);
+assertTrue('No duplicate condition ids', new Set(CONDITIONS.map(c => c.id)).size === CONDITIONS.length);
+
+// Verify every drug with weightBased has valid factor
+const drugsWithCalc = DRUGS.filter(d => d.weightBased.length > 0);
+assertTrue('Weight-based drugs have numeric factors', drugsWithCalc.every(d =>
+  d.weightBased.every(e => typeof e.factor === 'number' && e.factor > 0)
+));
+assertTrue('Weight-based drugs have units', drugsWithCalc.every(d =>
+  d.weightBased.every(e => typeof e.unit === 'string' && e.unit.length > 0)
+));
+
+// ═══════════════════════════════════════════════
+// HAVERSINE DISTANCE
+// ═══════════════════════════════════════════════
+section('Haversine Distance');
+
+// CHO airport to UVA Medical Center: ~7.5 miles straight line
+const dist = Utils.haversineDistanceMiles(HELICOPTER.baseCoords, HOSPITALS.uva.coords);
+assertTrue('CHO to UVA distance reasonable (5-15 mi)', dist > 5 && dist < 15);
+
+// Same point = 0
+assert('Same point distance', Utils.haversineDistanceMiles([38.0, -78.5], [38.0, -78.5]), 0);
+
+// ═══════════════════════════════════════════════
+// TIME FORMATTING
+// ═══════════════════════════════════════════════
+section('Time Formatting');
+assertTrue('formatTime 0s', Utils.formatTime(0) === '00:00');
+assertTrue('formatTime 65s', Utils.formatTime(65) === '01:05');
+assertTrue('formatTime 600s', Utils.formatTime(600) === '10:00');
+assertTrue('formatTimeLong 3661s', Utils.formatTimeLong(3661) === '1:01:01');
+assertTrue('formatTimeLong 59s', Utils.formatTimeLong(59) === '00:59');
+
+// ═══════════════════════════════════════════════
+// SUMMARY
+// ═══════════════════════════════════════════════
+const total = passed + failed;
+const summaryClass = failed === 0 ? 'all-pass' : 'has-fail';
+const summaryText = failed === 0
+  ? 'ALL ' + total + ' TESTS PASSED'
+  : failed + ' of ' + total + ' tests FAILED';
+output.innerHTML += '<div class="summary ' + summaryClass + '">' + summaryText + '</div>';
+
+document.title = (failed === 0 ? 'PASS' : 'FAIL') + ' — LMVRS Tests';
+</script>
+</body>
+</html>

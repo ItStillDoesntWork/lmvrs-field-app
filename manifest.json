@@ -1,0 +1,17 @@
+{
+  "name": "LMVRS Field Reference",
+  "short_name": "LMVRS",
+  "description": "EMS field reference for Lake Monticello Volunteer Rescue Squad",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0a0e14",
+  "theme_color": "#0a0e14",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
