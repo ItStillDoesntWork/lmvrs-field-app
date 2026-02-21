@@ -5,7 +5,7 @@
 // Cache-first strategy: serve from cache, fall back to network.
 // ============================================================
 
-const CACHE_NAME = 'lmvrs-v2';
+const CACHE_NAME = 'lmvrs-v3';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -27,11 +27,25 @@ const ASSETS_TO_CACHE = [
   './assets/icons/logo-plus-title.png',
 ];
 
-// Install: cache all assets
+// Optional assets — cached if available, but don't block install
+const OPTIONAL_ASSETS = [
+  './data/eta-grid.js',
+];
+
+// Install: cache all required assets, then try optional ones
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(ASSETS_TO_CACHE))
+      .then(() => caches.open(CACHE_NAME))
+      .then(cache => {
+        // Try to cache optional assets (don't fail install if missing)
+        return Promise.all(
+          OPTIONAL_ASSETS.map(url =>
+            cache.add(url).catch(() => {/* optional — ignore if missing */})
+          )
+        );
+      })
       .then(() => self.skipWaiting())
   );
 });
