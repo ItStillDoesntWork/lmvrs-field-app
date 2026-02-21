@@ -18,6 +18,8 @@ const CPR = {
   bpm: 110,
   muted: false,
   running: false,
+  torchStream: null,       // MediaStream for flashlight
+  torchOn: false,
   stopped: false,      // true after "Stop CPR" is pressed
   stopTime: null,      // timestamp when Stop CPR was pressed
   startTime: null,
@@ -62,6 +64,9 @@ const CPR = {
     html += '    <span id="cpr-mute-icon">' + (this.muted ? '&#x1F507;' : '&#x1F50A;') + '</span>';
     html += '  </button>';
     html += '  <div class="bpm-display">' + this.bpm + ' BPM</div>';
+    html += '  <button class="torch-btn' + (this.torchOn ? ' torch-on' : '') + '" id="cpr-torch-btn" onclick="CPR.toggleTorch()" title="Flashlight">';
+    html += '    &#x1F526;';
+    html += '  </button>';
     html += '</div>';
 
     // Event buttons (disabled when stopped, except Other which is always below)
@@ -190,36 +195,74 @@ const CPR = {
     }
     this.stopMetronome();
 
+    // Turn off flashlight
+    if (this.torchStream) {
+      this.torchStream.getTracks().forEach(t => t.stop());
+      this.torchStream = null;
+    }
+    this.torchOn = false;
+
     // Update the home button back to normal
     this.updateHomeButton();
   },
 
+  // Lookahead scheduler: uses Web Audio clock for precise timing.
+  // setInterval just tops up a queue of pre-scheduled beats.
+  scheduleAheadSec: 0.2,   // schedule beats this far ahead
+  schedulerIntervalMs: 50,  // how often to check and schedule
+  nextBeatTime: 0,          // audioCtx time of next beat
+
   startMetronome() {
     if (this.metronomeInterval) return; // already running
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const intervalMs = 60000 / this.bpm;
+    // Resume in case browser suspended it (mobile requirement)
+    if (this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume();
+    }
+    this.nextBeatTime = this.audioCtx.currentTime;
 
     this.metronomeInterval = setInterval(() => {
-      if (!this.muted && this.audioCtx) {
-        this.playClick();
-      }
-    }, intervalMs);
+      this.scheduleBeat();
+    }, this.schedulerIntervalMs);
   },
 
-  playClick() {
+  scheduleBeat() {
+    if (!this.audioCtx) return;
+    const beatInterval = 60.0 / this.bpm;
+    while (this.nextBeatTime < this.audioCtx.currentTime + this.scheduleAheadSec) {
+      if (!this.muted) {
+        this.playClick(this.nextBeatTime);
+      }
+      this.nextBeatTime += beatInterval;
+    }
+  },
+
+  playClick(time) {
     if (!this.audioCtx) return;
     try {
-      const osc = this.audioCtx.createOscillator();
-      const gain = this.audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(this.audioCtx.destination);
-      osc.frequency.value = 800;
-      gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.05);
-      osc.start(this.audioCtx.currentTime);
-      osc.stop(this.audioCtx.currentTime + 0.05);
+      // Layer 1: sharp attack click (high freq burst)
+      const osc1 = this.audioCtx.createOscillator();
+      const gain1 = this.audioCtx.createGain();
+      osc1.connect(gain1);
+      gain1.connect(this.audioCtx.destination);
+      osc1.frequency.value = 1000;
+      gain1.gain.setValueAtTime(1.0, time);
+      gain1.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+      osc1.start(time);
+      osc1.stop(time + 0.06);
+
+      // Layer 2: low thump for body
+      const osc2 = this.audioCtx.createOscillator();
+      const gain2 = this.audioCtx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(this.audioCtx.destination);
+      osc2.frequency.value = 150;
+      gain2.gain.setValueAtTime(0.8, time);
+      gain2.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+      osc2.start(time);
+      osc2.stop(time + 0.08);
     } catch (e) {
-      // Audio context may be suspended; ignore
+      // Audio context may be closed; ignore
     }
   },
 
@@ -235,6 +278,35 @@ const CPR = {
         btn.className = 'mute-btn unmuted';
         icon.innerHTML = '&#x1F50A;';
       }
+    }
+  },
+
+  async toggleTorch() {
+    const btn = document.getElementById('cpr-torch-btn');
+    if (this.torchOn) {
+      // Turn off
+      if (this.torchStream) {
+        this.torchStream.getTracks().forEach(t => t.stop());
+        this.torchStream = null;
+      }
+      this.torchOn = false;
+      if (btn) btn.classList.remove('torch-on');
+      return;
+    }
+
+    try {
+      // Request camera with torch — this turns the flashlight on
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      });
+      const track = stream.getVideoTracks()[0];
+      await track.applyConstraints({ advanced: [{ torch: true }] });
+      this.torchStream = stream;
+      this.torchOn = true;
+      if (btn) btn.classList.add('torch-on');
+    } catch (e) {
+      // Torch not supported or permission denied — hide the button
+      if (btn) btn.style.display = 'none';
     }
   },
 
