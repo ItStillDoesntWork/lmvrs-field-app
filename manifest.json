@@ -9,9 +9,9 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "assets/icons/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "assets/icons/rescue-logo.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }

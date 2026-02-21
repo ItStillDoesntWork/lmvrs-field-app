@@ -5,7 +5,7 @@
 // Cache-first strategy: serve from cache, fall back to network.
 // ============================================================
 
-const CACHE_NAME = 'lmvrs-v1';
+const CACHE_NAME = 'lmvrs-v2';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -23,6 +23,8 @@ const ASSETS_TO_CACHE = [
   './data/tools-config.js',
   './data/help-content.js',
   './manifest.json',
+  './assets/icons/rescue-logo.png',
+  './assets/icons/logo-plus-title.png',
 ];
 
 // Install: cache all assets

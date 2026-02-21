@@ -72,7 +72,7 @@ body {
 #home { background: linear-gradient(160deg, #0a0e14 0%, #0f1d30 60%, #0a0e14 100%); }
 
 .home-header {
-  padding: 28px 24px 18px;
+  padding: 20px 24px 14px;
   text-align: center;
   position: relative;
 }
@@ -86,36 +86,15 @@ body {
   background: linear-gradient(90deg, transparent, var(--border), transparent);
 }
 
-.logo-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
-.logo-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(30, 144, 255, .12);
-  border: 1px solid rgba(30, 144, 255, .3);
-  border-radius: 6px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--accent-blue);
-}
-.lmvrs-badge {
-  background: rgba(255, 214, 10, .1);
-  border: 1px solid rgba(255, 214, 10, .3);
-  color: var(--accent-yellow);
+.home-logo-img {
+  display: block;
+  max-width: 320px;
+  width: 85%;
+  height: auto;
+  margin: 0 auto 8px;
 }
 
-.home-title {
-  font-size: 44px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -1px;
-  color: #fff;
-}
-.home-title span { color: var(--accent-blue); }
-.home-sub { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
-.home-sub em { color: var(--accent-yellow); font-style: normal; }
+.home-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
 /* Primary action buttons: CPR + Tools */
 .home-primary-actions {
@@ -252,7 +231,8 @@ body {
 }
 .action-btn:active { transform: scale(0.97); }
 .action-btn:hover { background: var(--surface2); }
-.action-icon { font-size: 24px; }
+.action-icon { font-size: 24px; display: flex; align-items: center; justify-content: center; }
+.action-logo { width: 32px; height: 32px; border-radius: 50%; }
 .action-name { font-size: 17px; font-weight: 700; color: var(--text); }
 .action-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
