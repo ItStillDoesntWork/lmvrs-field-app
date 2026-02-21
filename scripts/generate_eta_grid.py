@@ -31,11 +31,13 @@ import urllib.error
 
 OSRM_URL = "http://localhost:5000"
 
-# Fluvanna County approximate bounds (with small buffer)
-NORTH = 37.94
+# Coverage area: Fluvanna County + route corridor to hospitals in Charlottesville.
+# Extends north to ~38.05 to cover UVA/MJH and the approach roads,
+# so the app keeps working as the ambulance drives toward the hospital.
+NORTH = 38.05
 SOUTH = 37.77
 EAST = -78.20
-WEST = -78.50
+WEST = -78.55
 
 # Grid spacing: ~0.25 miles
 # 1 degree latitude  ≈ 69 miles

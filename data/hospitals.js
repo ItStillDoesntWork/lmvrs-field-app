@@ -39,10 +39,10 @@ const HELICOPTER = {
   lzOperationsMin: 12,            // Landing, report, evaluate, load, liftoff at scene
 };
 
-// Fluvanna County approximate bounding box (for ETA grid generation)
+// ETA grid coverage area (Fluvanna County + route corridor to hospitals)
 const COUNTY_BOUNDS = {
-  north: 37.94,
+  north: 38.05,
   south: 37.77,
   east: -78.20,
-  west: -78.50,
+  west: -78.55,
 };
