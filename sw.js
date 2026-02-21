@@ -5,7 +5,7 @@
 // Cache-first strategy: serve from cache, fall back to network.
 // ============================================================
 
-const CACHE_NAME = 'lmvrs-v5';
+const CACHE_NAME = 'lmvrs-v6';
 
 const ASSETS_TO_CACHE = [
   './',

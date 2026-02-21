@@ -38,8 +38,8 @@ const App = {
       CPR.updateHomeButton();
     }
 
-    // Track history for back button
-    if (this.screenHistory[this.screenHistory.length - 1] !== id) {
+    // Track history for back button (skip when navigating back)
+    if (!this._navigating && this.screenHistory[this.screenHistory.length - 1] !== id) {
       this.screenHistory.push(id);
     }
 
@@ -50,13 +50,17 @@ const App = {
   },
 
   goBack() {
+    if (this.screenHistory.length <= 1) {
+      this._navigating = true;
+      this.showScreen('home');
+      this._navigating = false;
+      return;
+    }
     this.screenHistory.pop();
     const prev = this.screenHistory[this.screenHistory.length - 1] || 'home';
     this._navigating = true;
     this.showScreen(prev);
     this._navigating = false;
-    // Pop again since showScreen added it back
-    this.screenHistory.pop();
   },
 
   // ── DRUG REFERENCE ──
