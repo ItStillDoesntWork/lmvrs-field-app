@@ -77,8 +77,13 @@ def generate_grid_points():
 def check_osrm():
     """Verify OSRM is running and responsive."""
     try:
-        req = urllib.request.urlopen(OSRM_URL, timeout=5)
+        # Root URL returns InvalidUrl which is still a valid JSON response,
+        # so we just check that we get any response at all.
+        req = urllib.request.urlopen(OSRM_URL + "/table/v1/driving/-78.5,38.0;-78.5,38.0", timeout=5)
         req.close()
+        return True
+    except urllib.error.HTTPError:
+        # HTTP errors (like 400) still mean OSRM is running
         return True
     except Exception as e:
         return False
