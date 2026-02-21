@@ -37,7 +37,7 @@ const ETA = {
     this.watchId = navigator.geolocation.watchPosition(
       (pos) => this.onPosition(pos),
       (err) => this.onError(err),
-      { enableHighAccuracy: false, maximumAge: 300000, timeout: 10000 }
+      { enableHighAccuracy: true, maximumAge: 30000, timeout: 15000 }
     );
   },
 
@@ -261,7 +261,7 @@ const ETA = {
     }
 
     const age = Date.now() - this.lastFixTime;
-    if (age < 5000) {
+    if (age < 60000) {
       bar.classList.add('gps-active');
     } else if (age < this.STALE_THRESHOLD_MS) {
       bar.classList.add('gps-stale');

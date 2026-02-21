@@ -15,7 +15,7 @@ const HOSPITALS = {
   uva: {
     name: 'UVA Medical Center',
     shortName: 'UVA',
-    coords: [38.0307, -78.5010],    // APPROXIMATE — verify with actual address
+    coords: [38.031352, -78.498144],    // APPROXIMATE — verify with actual address
   },
   mjh: {
     name: 'Sentara Martha Jefferson',
@@ -29,10 +29,10 @@ const HELICOPTER = {
   baseCoords: [38.1386, -78.4529],
 
   // UVA helipad (destination after patient pickup)
-  uvaHelipadCoords: [38.0310, -78.5015],  // PLACEHOLDER — verify actual helipad location
+  uvaHelipadCoords: [38.031352, -78.498144],  // PLACEHOLDER — verify actual helipad location
 
   // Cruise speed in miles per hour
-  cruiseSpeedMph: 150,
+  cruiseSpeedMph: 149.6,
 
   // Fixed overhead times in minutes (PLACEHOLDERS — get from Pegasus)
   dispatchAndPreflightMin: 9,     // Time from call to wheels-up at airport
