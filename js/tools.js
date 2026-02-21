@@ -247,38 +247,23 @@ const Tools = {
   // ── Rule of 9s ──
   renderRule9s() {
     const el = document.getElementById('rule9s-content');
-    let html = '<div class="tool-card">';
-    html += '<div class="tool-card-title">ADULT RULE OF 9s</div>';
-    html += '<table style="width:100%;font-size:15px;border-collapse:collapse">';
-    const rows = [
-      ['Head & Neck', '9%'],
-      ['Chest (anterior)', '9%'],
-      ['Abdomen (anterior)', '9%'],
-      ['Upper back', '9%'],
-      ['Lower back & buttocks', '9%'],
-      ['Each arm (entire)', '9%'],
-      ['Each leg (anterior)', '9%'],
-      ['Each leg (posterior)', '9%'],
-      ['Perineum', '1%'],
-    ];
-    rows.forEach(r => {
-      html += '<tr><td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.05)">' + r[0] + '</td>';
-      html += '<td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.05);text-align:right;font-weight:700;color:var(--accent-yellow)">' + r[1] + '</td></tr>';
-    });
-    html += '</table>';
+    let html = '';
+
+    // Warning
+    html += '<div class="tool-card" style="border-left:3px solid var(--accent-yellow);padding-left:12px">';
+    html += '<p style="font-size:13px;line-height:1.5;color:var(--accent-yellow);margin:0"><strong>WARNING:</strong> The Rule of Nines is inaccurate for some obese patients. Use your judgment, and communicate clearly in your pre-arrival report.</p>';
     html += '</div>';
 
-    html += '<div class="tool-card">';
-    html += '<div class="tool-card-title">PEDIATRIC MODIFICATIONS</div>';
-    html += '<p style="font-size:14px;line-height:1.6;color:var(--text)">';
-    html += 'Infant head = 18% (vs 9% adult)<br>';
-    html += 'Infant each leg = 14% (vs 18% adult)<br>';
-    html += 'Use Lund-Browder chart for accurate pediatric assessment';
-    html += '</p>';
+    // Adult diagram
+    html += '<div class="tool-card" style="text-align:center">';
+    html += '<div class="tool-card-title">ADULT</div>';
+    html += '<img src="assets/Wallace_rule_of_nines-en_text_visible.png" alt="Adult Rule of 9s" style="max-width:100%;height:auto;margin:8px 0">';
     html += '</div>';
 
-    html += '<div class="tool-card" style="text-align:center;color:var(--text-muted)">';
-    html += '<p>Graphic placeholder — supply Rule of 9s diagram image</p>';
+    // Pediatric diagram
+    html += '<div class="tool-card" style="text-align:center">';
+    html += '<div class="tool-card-title">PEDIATRIC</div>';
+    html += '<img src="assets/rule_of_nines_pediatric.png" alt="Pediatric Rule of 9s" style="max-width:100%;height:auto;margin:8px 0">';
     html += '</div>';
 
     el.innerHTML = html;
@@ -287,7 +272,15 @@ const Tools = {
   // ── 12-Lead Placement ──
   render12Lead() {
     const el = document.getElementById('lead12-content');
-    let html = '<div class="tool-card">';
+    let html = '';
+
+    // Precordial placement diagram
+    html += '<div class="tool-card" style="text-align:center">';
+    html += '<img src="assets/Precordial_leads_in_ECG.png" alt="Precordial lead placement" style="max-width:100%;height:auto;margin:8px 0">';
+    html += '</div>';
+
+    // Precordial leads table
+    html += '<div class="tool-card">';
     html += '<div class="tool-card-title">PRECORDIAL LEAD PLACEMENT</div>';
     const leads = [
       ['V1', '4th ICS, right sternal border'],
@@ -305,6 +298,7 @@ const Tools = {
     html += '</table>';
     html += '</div>';
 
+    // Limb leads with warnings
     html += '<div class="tool-card">';
     html += '<div class="tool-card-title">LIMB LEADS</div>';
     html += '<p style="font-size:14px;line-height:1.8;color:var(--text)">';
@@ -313,10 +307,21 @@ const Tools = {
     html += 'RL (Green) — Right leg<br>';
     html += 'LL (Red) — Left leg';
     html += '</p>';
+    html += '<p style="font-size:13px;line-height:1.5;color:var(--accent-yellow);margin-top:8px">';
+    html += 'Place on limbs, proximal to wrists/ankles. Upper extremity leads go below the anterior axillary fold. Avoid forearms on patients with tremors. Do not place under a BP cuff.';
+    html += '</p>';
     html += '</div>';
 
-    html += '<div class="tool-card" style="text-align:center;color:var(--text-muted)">';
-    html += '<p>Graphic placeholder — supply 12-lead placement diagram image</p>';
+    // Example EKGs
+    html += '<div class="tool-card" style="text-align:center">';
+    html += '<p style="font-size:14px;font-weight:700;color:var(--accent-red);margin-bottom:4px">This is a noisy EKG. Do not send it to the hospital.</p>';
+    html += '<img src="assets/Noisy-ECG.png" alt="Noisy EKG" style="max-width:100%;height:auto;margin:4px 0 16px;border-radius:8px">';
+
+    html += '<p style="font-size:14px;font-weight:700;color:var(--accent-green);margin-bottom:4px">This is a clean EKG. You can send this to the hospital.</p>';
+    html += '<img src="assets/not Noisy-ECG.png" alt="Clean EKG" style="max-width:100%;height:auto;margin:4px 0 16px;border-radius:8px">';
+
+    html += '<p style="font-size:14px;font-weight:700;color:var(--accent-red);margin-bottom:4px">This is ventricular fibrillation — BEGIN CPR!</p>';
+    html += '<img src="assets/Ventricular-Fibrillation-ECG-Tracing-scaled.jpg" alt="Ventricular fibrillation" style="max-width:100%;height:auto;margin:4px 0;border-radius:8px">';
     html += '</div>';
 
     el.innerHTML = html;

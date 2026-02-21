@@ -17,6 +17,8 @@ const App = {
   LEVEL_RANK: { EMT: 1, AEMT: 2, IP: 3 },
 
   // ── SCREEN NAVIGATION ──
+  _navigating: false, // flag to prevent popstate from pushing state
+
   showScreen(id) {
     // Special handling for CPR mode
     if (id === 'cpr-mode') {
@@ -40,12 +42,19 @@ const App = {
     if (this.screenHistory[this.screenHistory.length - 1] !== id) {
       this.screenHistory.push(id);
     }
+
+    // Push browser history state so Android back button works
+    if (!this._navigating && id !== 'home') {
+      history.pushState({ screen: id }, '');
+    }
   },
 
   goBack() {
     this.screenHistory.pop();
     const prev = this.screenHistory[this.screenHistory.length - 1] || 'home';
+    this._navigating = true;
     this.showScreen(prev);
+    this._navigating = false;
     // Pop again since showScreen added it back
     this.screenHistory.pop();
   },
@@ -362,6 +371,17 @@ const App = {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
     }
+
+    // Android back button: listen for popstate to navigate back in-app
+    history.replaceState({ screen: 'home' }, '');
+    window.addEventListener('popstate', (e) => {
+      if (App.screenHistory.length > 1) {
+        App.goBack();
+      } else {
+        // Already at home — push state back so next press still works
+        history.pushState({ screen: 'home' }, '');
+      }
+    });
   },
 };
 

@@ -5,7 +5,7 @@
 // Cache-first strategy: serve from cache, fall back to network.
 // ============================================================
 
-const CACHE_NAME = 'lmvrs-v4';
+const CACHE_NAME = 'lmvrs-v5';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -25,6 +25,12 @@ const ASSETS_TO_CACHE = [
   './manifest.json',
   './assets/icons/rescue-logo.png',
   './assets/icons/logo-plus-title.png',
+  './assets/Wallace_rule_of_nines-en_text_visible.png',
+  './assets/rule_of_nines_pediatric.png',
+  './assets/Precordial_leads_in_ECG.png',
+  './assets/Noisy-ECG.png',
+  './assets/not Noisy-ECG.png',
+  './assets/Ventricular-Fibrillation-ECG-Tracing-scaled.jpg',
 ];
 
 // Optional assets — cached if available, but don't block install
