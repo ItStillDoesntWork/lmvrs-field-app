@@ -39,6 +39,16 @@ const ETA = {
       (err) => this.onError(err),
       { enableHighAccuracy: true, maximumAge: 30000, timeout: 15000 }
     );
+
+    // Fallback: poll getCurrentPosition every 60s in case watchPosition
+    // stops firing when stationary (common on Android Firefox)
+    this.pollInterval = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => this.onPosition(pos),
+        () => {},
+        { enableHighAccuracy: true, maximumAge: 60000, timeout: 10000 }
+      );
+    }, 60000);
   },
 
   // Build a spatial index from the grid for fast lookup.
@@ -261,7 +271,7 @@ const ETA = {
     }
 
     const age = Date.now() - this.lastFixTime;
-    if (age < 60000) {
+    if (age < 5 * 60 * 1000) {
       bar.classList.add('gps-active');
     } else if (age < this.STALE_THRESHOLD_MS) {
       bar.classList.add('gps-stale');
@@ -350,7 +360,7 @@ const ETA = {
       html += '<p style="font-size:13px;color:var(--text-muted);line-height:1.6">';
       html += 'Grid points: ' + ETA_GRID.length + '<br>';
       html += 'Coverage: Fluvanna County, VA<br>';
-      html += 'Resolution: ~0.25 mile spacing<br>';
+      html += 'Resolution: ~0.125 mile spacing<br>';
       html += 'Interpolation: bilinear (4-point)';
       html += '</p>';
     } else {
