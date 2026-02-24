@@ -801,25 +801,6 @@ body {
   color: var(--text-muted);
   font-weight: 700;
 }
-.torch-btn {
-  width: 80px;
-  height: 64px;
-  border-radius: 12px;
-  border: 2px solid var(--text-muted);
-  font-size: 28px;
-  cursor: pointer;
-  background: rgba(255,255,255,.05);
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-}
-.torch-btn.torch-on {
-  background: rgba(255, 204, 0, .3);
-  border-color: #fc0;
-  color: #fc0;
-}
 
 .cpr-event-buttons {
   display: grid;

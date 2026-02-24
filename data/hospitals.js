@@ -15,17 +15,17 @@ const HOSPITALS = {
   uva: {
     name: 'UVA Medical Center',
     shortName: 'UVA',
-    coords: [38.031352, -78.498144],    // APPROXIMATE — verify with actual address
+    coords: [38.030610, -78.497376],    // APPROXIMATE — verify with actual address https://www.openstreetmap.org/#map=19/38.030610/-78.497376
   },
   mjh: {
     name: 'Sentara Martha Jefferson',
     shortName: 'MJH',
-    coords: [38.0340, -78.4770],    // APPROXIMATE — verify with actual address
+    coords: [38.021012, -78.444239],    // APPROXIMATE — verify with actual address https://www.openstreetmap.org/#map=19/38.021012/-78.444239
   },
 };
 
 const HELICOPTER = {
-  // Pegasus base: Charlottesville-Albemarle Airport (CHO)
+  // Pegasus base: Charlottesville-Albemarle Airport (CHO) https://www.openstreetmap.org/#map=18/38.135240/-78.451931
   baseCoords: [38.1386, -78.4529],
 
   // UVA helipad (destination after patient pickup)

@@ -382,10 +382,30 @@ const App = {
       if (App.screenHistory.length > 1) {
         App.goBack();
       } else {
-        // Already at home — push state back so next press still works
         history.pushState({ screen: 'home' }, '');
       }
     });
+
+    // Easter egg
+    this._torchStream = null;
+    const logo = document.querySelector('.home-logo-img');
+    if (logo) {
+      logo.addEventListener('click', () => {
+        if (this._torchStream) {
+          this._torchStream.getTracks().forEach(t => t.stop());
+          this._torchStream = null;
+        } else {
+          navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(stream => {
+              const track = stream.getVideoTracks()[0];
+              return track.applyConstraints({ advanced: [{ torch: true }] }).then(() => {
+                this._torchStream = stream;
+              });
+            })
+            .catch(() => {});
+        }
+      });
+    }
   },
 };
 

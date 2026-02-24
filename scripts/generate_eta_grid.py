@@ -39,15 +39,15 @@ SOUTH = 37.77
 EAST = -78.20
 WEST = -78.55
 
-# Grid spacing: ~0.25 miles
+# Grid spacing: ~0.125 miles
 # 1 degree latitude  ≈ 69 miles
 # 1 degree longitude ≈ 69 * cos(lat) miles ≈ 54.5 miles at lat 37.85
-GRID_STEP_LAT = 0.25 / 69.0          # ~0.00362 degrees
-GRID_STEP_LON = 0.25 / 54.5          # ~0.00459 degrees
+GRID_STEP_LAT = 0.125 / 69.0         # ~0.00181 degrees
+GRID_STEP_LON = 0.125 / 54.5         # ~0.00229 degrees
 
 # Hospital destinations (lon, lat for OSRM which uses lon,lat order)
-UVA = {"name": "UVA Medical Center", "lon": -78.5010, "lat": 38.0307}
-MJH = {"name": "Martha Jefferson",   "lon": -78.4770, "lat": 38.0340}
+UVA = {"name": "UVA Medical Center", "lon": -78.497376, "lat": 38.030610}
+MJH = {"name": "Martha Jefferson",   "lon": -78.444239, "lat": 38.021012}
 
 # OSRM Table API batch size (sources per request)
 BATCH_SIZE = 100

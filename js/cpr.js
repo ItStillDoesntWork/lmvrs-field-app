@@ -18,8 +18,6 @@ const CPR = {
   bpm: 110,
   muted: false,
   running: false,
-  torchStream: null,       // MediaStream for flashlight
-  torchOn: false,
   stopped: false,      // true after "Stop CPR" is pressed
   stopTime: null,      // timestamp when Stop CPR was pressed
   startTime: null,
@@ -64,9 +62,6 @@ const CPR = {
     html += '    <span id="cpr-mute-icon">' + (this.muted ? '&#x1F507;' : '&#x1F50A;') + '</span>';
     html += '  </button>';
     html += '  <div class="bpm-display">' + this.bpm + ' BPM</div>';
-    html += '  <button class="torch-btn' + (this.torchOn ? ' torch-on' : '') + '" id="cpr-torch-btn" onclick="CPR.toggleTorch()" title="Flashlight">';
-    html += '    &#x1F526;';
-    html += '  </button>';
     html += '</div>';
 
     // Event buttons (disabled when stopped, except Other which is always below)
@@ -195,13 +190,6 @@ const CPR = {
     }
     this.stopMetronome();
 
-    // Turn off flashlight
-    if (this.torchStream) {
-      this.torchStream.getTracks().forEach(t => t.stop());
-      this.torchStream = null;
-    }
-    this.torchOn = false;
-
     // Update the home button back to normal
     this.updateHomeButton();
   },
@@ -278,35 +266,6 @@ const CPR = {
         btn.className = 'mute-btn unmuted';
         icon.innerHTML = '&#x1F50A;';
       }
-    }
-  },
-
-  async toggleTorch() {
-    const btn = document.getElementById('cpr-torch-btn');
-    if (this.torchOn) {
-      // Turn off
-      if (this.torchStream) {
-        this.torchStream.getTracks().forEach(t => t.stop());
-        this.torchStream = null;
-      }
-      this.torchOn = false;
-      if (btn) btn.classList.remove('torch-on');
-      return;
-    }
-
-    try {
-      // Request camera with torch — this turns the flashlight on
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
-      });
-      const track = stream.getVideoTracks()[0];
-      await track.applyConstraints({ advanced: [{ torch: true }] });
-      this.torchStream = stream;
-      this.torchOn = true;
-      if (btn) btn.classList.add('torch-on');
-    } catch (e) {
-      // Torch not supported or permission denied — hide the button
-      if (btn) btn.style.display = 'none';
     }
   },
 
