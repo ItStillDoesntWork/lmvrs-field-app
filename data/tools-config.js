@@ -19,4 +19,5 @@ const TOOLS = [
   { id: 'dose-calc',     name: 'Dose Calc',        icon: '\u2696\ufe0f', screenId: 'calculator',      description: 'Weight-based doses' },
   { id: 'phone-numbers', name: 'Phone',            icon: '\ud83d\udcde', screenId: 'phone-numbers',   description: 'Quick dial' },
   { id: 'hospital-eta',  name: 'Hospital ETA',     icon: '\ud83d\udea8', screenId: 'tool-eta',        description: 'Drive time estimate' },
+  { id: 'share',         name: 'Share',            icon: '\ud83d\udcf2', screenId: 'tool-share',      description: 'QR codes & links' },
 ];

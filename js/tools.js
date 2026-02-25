@@ -372,6 +372,28 @@ const Tools = {
     el.innerHTML = html;
   },
 
+  // ── Share (QR Codes) ──
+  renderShare() {
+    const el = document.getElementById('share-content');
+    let html = '';
+
+    html += '<div class="tool-card" style="text-align:center">';
+    html += '<div class="tool-card-title">LMVRS FIELD APP</div>';
+    html += '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Offline EMS field reference for LMVRS providers.</p>';
+    html += '<img src="assets/qr-code-url-ttpsitstilldoesntwork.png" alt="Field App QR Code" style="max-width:220px;height:auto;margin:0 auto;border-radius:8px">';
+    html += '<p style="font-size:12px;color:var(--text-muted);margin-top:8px;word-break:break-all">itstilldoesntwork.github.io/lmvrs-field-app/</p>';
+    html += '</div>';
+
+    html += '<div class="tool-card" style="text-align:center">';
+    html += '<div class="tool-card-title">JOIN LMVRS</div>';
+    html += '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Volunteer with Lake Monticello Volunteer Rescue Squad.</p>';
+    html += '<img src="assets/qr-code-urlhttpslmvfr.orgrescue-join.png" alt="LMVRS Join QR Code" style="max-width:220px;height:auto;margin:0 auto;border-radius:8px">';
+    html += '<p style="font-size:12px;color:var(--text-muted);margin-top:8px;word-break:break-all">lmvfr.org/rescue-join/</p>';
+    html += '</div>';
+
+    el.innerHTML = html;
+  },
+
   // Initialize all tool screens
   initAll() {
     this.renderGrid();
@@ -384,5 +406,6 @@ const Tools = {
     this.renderRule9s();
     this.render12Lead();
     this.renderBroselow();
+    this.renderShare();
   },
 };

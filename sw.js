@@ -5,7 +5,7 @@
 // Cache-first strategy: serve from cache, fall back to network.
 // ============================================================
 
-const CACHE_NAME = 'lmvrs-v6';
+const CACHE_NAME = 'lmvrs-v7';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -31,6 +31,8 @@ const ASSETS_TO_CACHE = [
   './assets/Noisy-ECG.png',
   './assets/not Noisy-ECG.png',
   './assets/Ventricular-Fibrillation-ECG-Tracing-scaled.jpg',
+  './assets/qr-code-url-ttpsitstilldoesntwork.png',
+  './assets/qr-code-urlhttpslmvfr.orgrescue-join.png',
 ];
 
 // Optional assets — cached if available, but don't block install
